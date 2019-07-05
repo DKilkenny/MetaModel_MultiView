@@ -1,6 +1,7 @@
 # Imports
 import numpy 
 import openmdao.api as om
+import matplotlib.pyplot as plt
 
 # ======================================================================
 #                       Engine Setup
@@ -50,20 +51,7 @@ xlimits = numpy.array([
     [0, 1]
 ])
 
-
-# ni = 50
-# nj = 50
-
-# xlin1 = numpy.linspace(xlimits[0, 0], xlimits[0, 1], ni)
-# xlin2 = numpy.linspace(xlimits[1, 0], xlimits[1, 1], nj)
-# x1, x2 = numpy.meshgrid(xlin1, xlin2)
-# x = numpy.zeros((ni, nj, 3))
-# x[:, :, 0] = x1
-# x[:, :, 1] = x2
-# x[:, :, 2] = 1.0
-
-# surf = numpy.zeros((ni, nj, 3))
-
+# Initial class call
 interp = om.MetaModelUnStructuredComp(default_surrogate=om.ResponseSurface())
 # Inputs
 interp.add_input('Mach', 0., training_data=xt[:, 0])
@@ -71,7 +59,7 @@ interp.add_input('Alt', 0., training_data=xt[:, 1])
 interp.add_input('Trottle', 0., training_data=xt[:, 2])
 
 # Outputs
-interp.add_output('Trust', training_data=yt[:, 0])
+interp.add_output('Thrust', training_data=yt[:, 0])
 interp.add_output('TSFC', training_data=yt[:, 1])
 
 # Create the problem setup
@@ -79,6 +67,7 @@ prob = om.Problem()
 prob.model.add_subsystem('interp', interp)
 prob.setup()
 
+# Inital conditions in the code are optional
 # Given a certain input...
 prob['interp.Mach'] = 0.26
 prob['interp.Alt'] = 10000
@@ -86,6 +75,18 @@ prob['interp.Trottle'] = 47
 
 # ..Run the model...
 prob.run_model()
-# ...and print the predicted outputs
+# ...and print the predicted outputs (optional)
 print(prob['interp.Trust'])
 print(prob['interp.TSFC'])
+
+
+# ======================================================================
+#                       MultiView Ploting Tests
+# ======================================================================
+
+# Predicted values (line)
+# Training data (dots)
+
+
+plt.scatter(interp.options['train:Mach'], prob.model.interp.options['train:Thrust'])
+plt.show()
