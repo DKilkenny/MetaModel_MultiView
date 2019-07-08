@@ -76,7 +76,7 @@ prob['interp.Trottle'] = 47
 # ..Run the model...
 prob.run_model()
 # ...and print the predicted outputs (optional)
-print(prob['interp.Trust'])
+print(prob['interp.Thrust'])
 print(prob['interp.TSFC'])
 
 
