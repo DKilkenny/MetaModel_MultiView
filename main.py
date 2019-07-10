@@ -1,13 +1,12 @@
 # Imports
-import numpy as np
+import numpy 
 import openmdao.api as om
-import matplotlib.pyplot as plt
 
 # ======================================================================
 #                       Engine Setup
 # ======================================================================
 # Load Data:
-tmp = np.loadtxt('UHB.outputFLOPS')
+tmp = numpy.loadtxt('UHB.outputFLOPS')
 
 # net thrust = gross thrust - ram drag (and convert to N)
 tmp[:, 3] = (tmp[:, 3] - tmp[:, 4])*4.44822162
@@ -29,8 +28,8 @@ engineOptions = {'mach':tmp[:, 0],
 
 # Creating empty arrays
 nt = len(tmp)
-xt = np.zeros((nt, 3))
-yt = np.zeros((nt, 2))
+xt = numpy.zeros((nt, 3))
+yt = numpy.zeros((nt, 2))
 
 # Mach in column 0 of xt
 xt[:, 0] = tmp[:, 0]
@@ -45,21 +44,34 @@ yt[:, 0] = tmp[:, 3] / 1e5
 yt[:, 1] = tmp[:, 6] / 3600.
 
 # Set the limits of x
-xlimits = np.array([
+xlimits = numpy.array([
     [0.0, 0.9],
     [0., 43.],
     [0, 1]
 ])
 
-# Initial class call
+
+# ni = 50
+# nj = 50
+
+# xlin1 = numpy.linspace(xlimits[0, 0], xlimits[0, 1], ni)
+# xlin2 = numpy.linspace(xlimits[1, 0], xlimits[1, 1], nj)
+# x1, x2 = numpy.meshgrid(xlin1, xlin2)
+# x = numpy.zeros((ni, nj, 3))
+# x[:, :, 0] = x1
+# x[:, :, 1] = x2
+# x[:, :, 2] = 1.0
+
+# surf = numpy.zeros((ni, nj, 3))
+
 interp = om.MetaModelUnStructuredComp(default_surrogate=om.ResponseSurface())
 # Inputs
 interp.add_input('Mach', 0., training_data=xt[:, 0])
 interp.add_input('Alt', 0., training_data=xt[:, 1])
-interp.add_input('Throttle', 0., training_data=xt[:, 2])
+interp.add_input('Trottle', 0., training_data=xt[:, 2])
 
 # Outputs
-interp.add_output('Thrust', training_data=yt[:, 0])
+interp.add_output('Trust', training_data=yt[:, 0])
 interp.add_output('TSFC', training_data=yt[:, 1])
 
 # Create the problem setup
@@ -67,94 +79,13 @@ prob = om.Problem()
 prob.model.add_subsystem('interp', interp)
 prob.setup()
 
-# Inital conditions in the code are optional
 # Given a certain input...
-# prob['interp.Mach'] = 0.26
-# prob['interp.Alt'] = 10000
-# prob['interp.Throttle'] = 47
+prob['interp.Mach'] = 0.26
+prob['interp.Alt'] = 10000
+prob['interp.Trottle'] = 47
 
 # ..Run the model...
 prob.run_model()
-# ...and print the predicted outputs (optional)
-# print(prob['interp.Thrust'])
-# print(prob['interp.TSFC'])
-
-# ======================================================================
-#                       MultiView Ploting Tests
-# ======================================================================
-
-n = 100
-
-mach = np.linspace(min(xt[:, 0]), max(xt[:, 0]), n)
-alt = np.linspace(min(xt[:, 1]), max(xt[:, 1]), n)
-throttle = np.linspace(min(xt[:, 2]), max(xt[:, 2]), n)
-param = zip(mach, alt, throttle)
-
-
-# Loop with run_model to get predicted values
-# Going to need to refactor this in the future to possibly use 
-# the compute method within the Unstructured MetaModel component
-def make_predictions(x):
-    thrust = []
-    tsfc = []
-    print("Making Predictions")
-
-    for i, j, k in x:
-        prob['interp.Mach'] = i
-        prob['interp.Alt'] = j
-        prob['interp.Throttle'] = k
-        prob.run_model()
-        thrust.append(float(prob['interp.Thrust']))
-        tsfc.append(float(prob['interp.TSFC']))
-
-
-    # First pair should be 0.14934, 0.0001215
-    thrust = np.asarray(thrust)
-    tsfc = np.asarray(tsfc)
-
-    return np.stack([thrust, tsfc], axis=-1)
-
-
-### Set up grid ###
-nx = 3
-ny = 2
-x_index = 0
-y_index = 1
-output_variable = 0
-
-xe = np.zeros((n, n, nx))
-ye = np.zeros((n, n, ny))
-
-x0_list = np.ones(nx)
-for ix in range(nx):
-    xe[:,:, ix] = x0_list[ix]
-xlins = np.linspace(min(mach), max(mach), n)
-ylins = np.linspace(min(alt), max(alt), n)
-
-X, Y = np.meshgrid(xlins, ylins)
-xe[:,:, x_index] = X
-xe[:,:, y_index] = Y
-
-ye[:,:,:] = make_predictions(xe.reshape((n**2, nx))).reshape((n, n, ny))
-Z = ye[:,:,output_variable].flatten()
-
-Z = Z.reshape(n, n)
-
-
-# Plot
-cmap = plt.get_cmap('viridis')
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.imshow(Z, cmap=cmap, extent=[min(mach), max(mach), min(alt), max(alt)], aspect='auto', origin='lower')
-# ax.contourf(X,Y,Z, cmap=cmap, extent=(-10, 10,-10, 10), extend='both', aspect='auto', origin='lower')
-ax.set_xlabel('Mach')
-ax.set_ylabel('Altitude, kft')
-plt.show()
-
-print('Finished')
-
-
-# ======================================================================
-#                       MultiView Ploting Tests
-# ======================================================================
+# ...and print the predicted outputs
+print(prob['interp.Trust'])
+print(prob['interp.TSFC'])
