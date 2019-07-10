@@ -83,7 +83,7 @@ prob.run_model()
 #                       MultiView Ploting Tests
 # ======================================================================
 
-n = 100
+n = 25
 
 mach = np.linspace(min(xt[:, 0]), max(xt[:, 0]), n)
 alt = np.linspace(min(xt[:, 1]), max(xt[:, 1]), n)
@@ -142,18 +142,29 @@ Z = Z.reshape(n, n)
 
 
 # Plot
-cmap = plt.get_cmap('viridis')
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.imshow(Z, cmap=cmap, extent=[min(mach), max(mach), min(alt), max(alt)], aspect='auto', origin='lower')
-ax.set_xlabel('Mach')
-ax.set_ylabel('Altitude, kft')
-plt.show()
-
-print('Finished')
-
+# cmap = plt.get_cmap('viridis')
+# fig = plt.figure()
+# ax = fig.add_subplot(111)
+# ax.imshow(Z, cmap=cmap, extent=[min(mach), max(mach), min(alt), max(alt)], aspect='auto', origin='lower')
+# ax.set_xlabel('Mach')
+# ax.set_ylabel('Altitude, kft')
+# plt.show()
 
 # ======================================================================
-#                       MultiView Ploting Tests
+#                           JSON Dump
 # ======================================================================
+
+import json
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+        
+with open('data.txt', 'w') as outfile:
+    json_dump = json.dumps({'X': X, 'Y': Y, 'Z': Z}, cls=NumpyEncoder)
+    json.dump(json_dump,outfile)
+
+# Working output of json but needs inspection to determine if the ordering is correct
+# Next step will be opening this in a JavaScript file that will plot to plot.ly
