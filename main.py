@@ -104,9 +104,6 @@ def make_predictions(x):
         prob['interp.Alt'] = j
         prob['interp.Throttle'] = k
         prob.run_model()
-        # print(i,j,k)
-        # print("Thrust = %f" % prob['interp.Thrust'])
-        # print("TSFC = %f" % prob['interp.TSFC'])
         thrust.append(float(prob['interp.Thrust']))
         tsfc.append(float(prob['interp.TSFC']))
 
@@ -149,7 +146,8 @@ cmap = plt.get_cmap('viridis')
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.imshow(Z, cmap=cmap, extent=[-10, 10,-10, 10], aspect='auto', origin='lower')
+ax.imshow(Z, cmap=cmap, extent=[min(mach), max(mach), min(alt), max(alt)], aspect='auto', origin='lower')
+# ax.contourf(X,Y,Z, cmap=cmap, extent=(-10, 10,-10, 10), extend='both', aspect='auto', origin='lower')
 ax.set_xlabel('Mach')
 ax.set_ylabel('Altitude, kft')
 plt.show()
