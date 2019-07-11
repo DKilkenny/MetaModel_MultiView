@@ -83,7 +83,7 @@ prob.run_model()
 #                       MultiView Ploting Tests
 # ======================================================================
 
-n = 25
+n = 100
 
 mach = np.linspace(min(xt[:, 0]), max(xt[:, 0]), n)
 alt = np.linspace(min(xt[:, 1]), max(xt[:, 1]), n)
@@ -141,7 +141,7 @@ Z = ye[:,:,output_variable].flatten()
 Z = Z.reshape(n, n)
 
 
-# Plot
+# Plot (matplotlib)
 # cmap = plt.get_cmap('viridis')
 # fig = plt.figure()
 # ax = fig.add_subplot(111)
@@ -150,21 +150,46 @@ Z = Z.reshape(n, n)
 # ax.set_ylabel('Altitude, kft')
 # plt.show()
 
+import plotly.plotly as py
+import plotly.graph_objs as go
+
+data = [go.Contour(z=Z)]
+py.plot(data)
+
+
 # ======================================================================
 #                           JSON Dump
 # ======================================================================
 
 import json
 
-class NumpyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
-        
-with open('data.txt', 'w') as outfile:
-    json_dump = json.dumps({'X': X, 'Y': Y, 'Z': Z}, cls=NumpyEncoder)
-    json.dump(json_dump,outfile)
+def make_serializable(o):
+    """
+    Recursively convert numpy types to native types for JSON serialization.
+
+    Parameters
+    ----------
+    o : object
+        the object to be converted
+
+    Returns
+    -------
+    object
+        The converted object.
+    """
+    if isinstance(o, np.number):
+        return o.item()
+    elif isinstance(o, np.ndarray):
+        return make_serializable(o.tolist())
+    elif hasattr(o, '__dict__'):
+        return make_serializable(o.__class__.__name__)
+    else:
+        return o
+
+with open('data.json', 'w') as outfile:
+    json.dump({'X': X, 'Y': Y, 'Z': Z}, outfile, default=make_serializable) 
+    # json.dump(json_dump, outfile)
+
 
 # Working output of json but needs inspection to determine if the ordering is correct
 # Next step will be opening this in a JavaScript file that will plot to plot.ly
