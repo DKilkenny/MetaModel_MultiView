@@ -141,20 +141,55 @@ Z = ye[:,:,output_variable].flatten()
 Z = Z.reshape(n, n)
 
 
-# Plot
-cmap = plt.get_cmap('viridis')
+# Plot (matplotlib)
+# cmap = plt.get_cmap('viridis')
+# fig = plt.figure()
+# ax = fig.add_subplot(111)
+# ax.imshow(Z, cmap=cmap, extent=[min(mach), max(mach), min(alt), max(alt)], aspect='auto', origin='lower')
+# ax.set_xlabel('Mach')
+# ax.set_ylabel('Altitude, kft')
+# plt.show()
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.imshow(Z, cmap=cmap, extent=[min(mach), max(mach), min(alt), max(alt)], aspect='auto', origin='lower')
-# ax.contourf(X,Y,Z, cmap=cmap, extent=(-10, 10,-10, 10), extend='both', aspect='auto', origin='lower')
-ax.set_xlabel('Mach')
-ax.set_ylabel('Altitude, kft')
-plt.show()
+import plotly.plotly as py
+import plotly.graph_objs as go
 
-print('Finished')
+data = [go.Contour(z=Z)]
+py.plot(data)
 
 
 # ======================================================================
-#                       MultiView Ploting Tests
+#                           JSON Dump
 # ======================================================================
+
+import json
+
+def make_serializable(o):
+    """
+    Recursively convert numpy types to native types for JSON serialization.
+
+    Parameters
+    ----------
+    o : object
+        the object to be converted
+
+    Returns
+    -------
+    object
+        The converted object.
+    """
+    if isinstance(o, np.number):
+        return o.item()
+    elif isinstance(o, np.ndarray):
+        return make_serializable(o.tolist())
+    elif hasattr(o, '__dict__'):
+        return make_serializable(o.__class__.__name__)
+    else:
+        return o
+
+with open('data.json', 'w') as outfile:
+    json.dump({'X': X, 'Y': Y, 'Z': Z}, outfile, default=make_serializable) 
+    # json.dump(json_dump, outfile)
+
+
+# Working output of json but needs inspection to determine if the ordering is correct
+# Next step will be opening this in a JavaScript file that will plot to plot.ly
