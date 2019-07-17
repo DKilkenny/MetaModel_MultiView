@@ -3,10 +3,14 @@ import numpy as np
 import openmdao.api as om
 import matplotlib.pyplot as plt
 
+import plotly.plotly as py
+import plotly.graph_objs as go
+import plotly
+
 # ======================================================================
 #                       Engine Setup
 # ======================================================================
-# Load Data:
+# Load Data from John:
 tmp = np.loadtxt('UHB.outputFLOPS')
 
 # net thrust = gross thrust - ram drag (and convert to N)
@@ -67,22 +71,21 @@ prob = om.Problem()
 prob.model.add_subsystem('interp', interp)
 prob.setup()
 
-# Inital conditions in the code are optional
-# Given a certain input...
+# #Inital conditions in the code are optional
+## Given a certain input...
 # prob['interp.Mach'] = 0.26
 # prob['interp.Alt'] = 10000
 # prob['interp.Throttle'] = 47
 
-# ..Run the model...
-prob.run_model()
-# ...and print the predicted outputs (optional)
+## ..Run the model...
+# prob.run_model()
+## ...and print the predicted outputs (optional)
 # print(prob['interp.Thrust'])
 # print(prob['interp.TSFC'])
 
-# ======================================================================
-#                       MultiView Ploting Tests
-# ======================================================================
 
+
+# N is number of points we want to predict for
 n = 100
 
 mach = np.linspace(min(xt[:, 0]), max(xt[:, 0]), n)
@@ -107,8 +110,7 @@ def make_predictions(x):
         thrust.append(float(prob['interp.Thrust']))
         tsfc.append(float(prob['interp.TSFC']))
 
-
-    # First pair should be 0.14934, 0.0001215
+    # Cast as np arrays to concatenate them together at the end
     thrust = np.asarray(thrust)
     tsfc = np.asarray(tsfc)
 
@@ -122,6 +124,8 @@ x_index = 0
 y_index = 1
 output_variable = 0
 
+# Here we create a meshgrid so that we can take the X and Y
+# arrays and make pairs to send to make_predictions to get predictions
 xe = np.zeros((n, n, nx))
 ye = np.zeros((n, n, ny))
 
@@ -140,22 +144,27 @@ Z = ye[:,:,output_variable].flatten()
 
 Z = Z.reshape(n, n)
 
+# ======================================================================
+#                       MultiView Ploting
+# ======================================================================
 
-# Plot (matplotlib)
-# cmap = plt.get_cmap('viridis')
-# fig = plt.figure()
-# ax = fig.add_subplot(111)
-# ax.imshow(Z, cmap=cmap, extent=[min(mach), max(mach), min(alt), max(alt)], aspect='auto', origin='lower')
-# ax.set_xlabel('Mach')
-# ax.set_ylabel('Altitude, kft')
-# plt.show()
+# Comment out if plot is not desired
+def plot(plot_type):
+    # Plotly Py
+    if plot_type == 'plotly':
+        data = [go.Heatmap(z=Z, zsmooth='best')]
+        plotly.offline.plot(data)
+    else:
+        # Matplotlib version
+        cmap = plt.get_cmap('viridis')
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.imshow(Z, cmap=cmap, extent=[min(mach), max(mach), min(alt), max(alt)], aspect='auto', origin='lower')
+        ax.set_xlabel('Mach')
+        ax.set_ylabel('Altitude, kft')
+        plt.show()
 
-import plotly.plotly as py
-import plotly.graph_objs as go
-
-data = [go.Contour(z=Z)]
-py.plot(data)
-
+plot('plotly')
 
 # ======================================================================
 #                           JSON Dump
@@ -187,9 +196,4 @@ def make_serializable(o):
         return o
 
 with open('data.json', 'w') as outfile:
-    json.dump({'X': X, 'Y': Y, 'Z': Z}, outfile, default=make_serializable) 
-    # json.dump(json_dump, outfile)
-
-
-# Working output of json but needs inspection to determine if the ordering is correct
-# Next step will be opening this in a JavaScript file that will plot to plot.ly
+    json.dump({'X': X, 'Y': Y, 'Z': Z, 'mach_min': min(mach), 'mach_max': max(mach), 'alt_min': min(alt), 'alt_max': max(alt), 'alt': alt}, outfile, default=make_serializable) 
