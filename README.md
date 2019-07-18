@@ -1,6 +1,6 @@
 # UnstructMetaModel
 
-To run plotlyjs implementation code run the following code:
+To run plotlyjs implementation code, navigate to the plotlyjs_implementation folder and run the following code inside:
 ```
 npm install
 npm run webpack-dev
