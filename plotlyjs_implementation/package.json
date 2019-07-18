@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "webpack-dev": "webpack",
+    "watch": "webpack --watch",
     "webpack-prod": "NODE_ENV=production webpack -p"
   },
   "keywords": [],
