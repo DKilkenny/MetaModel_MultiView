@@ -3,10 +3,33 @@
   <head>
     <meta charset=utf-8>
     <title>plotly-webpack</title>
+
+    <!-- the style tag formats the positioning of the plot elements -->
+    <style>div.contour_style {
+      position: relative;
+      left: 450px;
+      top: 25px;
+    } 
+    </style>
+    <style>div.scatter_one_style {
+      position: relative;
+      left: 0px; 
+      top: 0px;
+    }
+    </style>
+    <style>div.scatter_two_style {
+        position: relative;
+        left: 0px; 
+        top: 0px;
+      }
+      </style>
+
   </head>
+
   <body>
-    <div id="contour"></div>
-    <div id="surface"></div>
+    <div id="contour" class="contour_style"></div>
+    <div id="scatter_one" class="scatter_one_style"></div>
+    <div id="scatter_two" class="scatter_two_style"></div>
     <script src="bundle.js"></script>
   </body>
 </html>
