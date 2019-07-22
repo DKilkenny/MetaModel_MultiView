@@ -154,6 +154,8 @@ def plot(plot_type):
     if plot_type == 'plotly':
         data = [go.Heatmap(z=Z, zsmooth='best')]
         plotly.offline.plot(data)
+    elif plot_type == 'no_plot' :
+        pass
     else:
         # Matplotlib version
         cmap = plt.get_cmap('viridis')
@@ -164,7 +166,7 @@ def plot(plot_type):
         ax.set_ylabel('Altitude, kft')
         plt.show()
 
-plot('plotly')
+plot('no_plot')
 
 # ======================================================================
 #                           JSON Dump
@@ -196,4 +198,5 @@ def make_serializable(o):
         return o
 
 with open('data.json', 'w') as outfile:
-    json.dump({'X': X, 'Y': Y, 'Z': Z, 'mach_min': min(mach), 'mach_max': max(mach), 'alt_min': min(alt), 'alt_max': max(alt), 'alt': alt}, outfile, default=make_serializable) 
+    json.dump({'X': X, 'Y': Y, 'Z': Z, 'mach_min': min(mach), 'mach_max': max(mach), 'alt_min': min(alt), 'alt_max': max(alt), 'alt': alt, 'training_data_yt':yt, 'training_data_xt': xt},
+     outfile, default=make_serializable) 
