@@ -5,92 +5,49 @@
     <title>plotly-webpack</title>
 
     <!-- the style tag formats the positioning of the plot elements -->
-    <style>div.contour_style {
-        position: relative;
+    <style>
+      div#outer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -500px;
+        margin-left: -500px;
+        width: 1000px;
+        height: 1000px;
+      }
+  
+      div#contour {
+        position: absolute;
         left: 300px;
-        /* width: 75%; */
-      } 
-    </style>
-      <style>div.scatter_one_style {
+        overflow: hidden;
+        /* border: 1px solid green; */
+      }
+  
+      div#scatter_one {
         position: absolute;
         top: 0px;
-        left: 0;
+        left: 0px;
         width: 300px;
-        height: 200px;
+        height: 700px;
+        overflow: hidden;
+        /* border: 1px solid red; */
       }
-      </style>
-      <style>div.scatter_two_style {
-          position: absolute;
-          left: 290px; 
-          top: 700px;
-        }
-        </style>
-
-    <!-- <style>div.contour_style {
+  
+      div#scatter_two {
         position: absolute;
-        left: 450px;
-        top: 25px;
-        margin-right: 450px
-      } 
-      </style>
-      <style>div.scatter_one_style {
-        position: relative;
-        left: 0px; 
-        top: 0px;
-        margin-right: 0px
-      }
-      </style>
-      <style>div.scatter_two_style {
-          position: relative;
-          left: 400px; 
-          top: 500px;
-        }
-        </style> -->
-
-  </head>
-
-  <body>
-    <div id="contour" class="contour_style"></div>
-    <div id="scatter_one" class="scatter_one_style"></div>
-    <div id="scatter_two" class="scatter_two_style"></div>
-    <script src="bundle.js"></script>
-  </body>
-</html>
-
-
-<!-- <!DOCTYPE html>
-<html lang=en>
-  <head>
-    <meta charset=utf-8>
-    <title>plotly-webpack</title>
-
-    <style>div.contour_style {
-      position: relative;
-      left: 300px;
-      /* width: 75%; */
-    } 
-    </style>
-    <style>div.scatter_one_style {
-      position: absolute;
-      top: 0px;
-      left: 0;
-      width: 300px;
-      height: 200px;
-    }
-    </style>
-    <style>div.scatter_two_style {
-        position: absolute;
-        left: 290px; 
+        left: 290px;
         top: 700px;
+        overflow: hidden;
+        /* border: 1px solid purple; */
       }
-      </style>
-
+    </style>
   </head>
 
   <body>
-      <div id="contour" class="contour_style"></div>
-      <div id="scatter_one" class="scatter_one_style"></div>
-      <div id="scatter_two" class="scatter_two_style"></div>
+    <div id="outer">
+      <div id="contour"></div>
+      <div id="scatter_one"></div>
+      <div id="scatter_two"></div>
       <script src="bundle.js"></script>
+    </div>
   </body>
-</html> -->

@@ -117,17 +117,6 @@ let contour_layout = {
     t: 100,
     pad: 2
     },
-    // shapes: [
-    //     //line vertical
-    //     { type: 'line',
-    //     x0: 0,
-    //     y0: 0,
-    //     x1: 0,
-    //     y1: 43,
-    //     line: {
-    //     color: 'rgb(255, 255, 255)',
-    //     width: 3 }
-    // }],
 }
 
 Plotly.newPlot('contour', contour_data, contour_layout, {responsive: true})
@@ -219,71 +208,13 @@ function machVsThrust(thrust_data_from_alt) {
     return Plotly.newPlot('scatter_two', [scatter_data, training_data], scatter_layout)
 }
 
+function scaleAll() {
+    let outer = document.getElementById("outer");
+    let minSize = Math.min(window.innerWidth, window.innerHeight);
+    let newScale = minSize / 1000;
+    let trText = "scale(" + newScale + ")";
+    outer.style.transform = trText;
+}
 
-// var trace1 = {
-// x: [1, 2],
-// y: [1, 2],
-// type: 'scatter',
-// name: '(1,1)'
-// };
-// var trace2 = {
-// x: [1, 2],
-// y: [1, 2],
-// type: 'scatter',
-// name: '(1,2)',
-// xaxis: 'x2',
-// yaxis: 'y2'
-// };
-// var trace3 = {
-// x: [1, 2],
-// y: [1, 2],
-// type: 'scatter',
-// name: '(1,2)',
-// xaxis: 'x3',
-// yaxis: 'y3'
-// };
-// var trace4 = {
-// x: [1, 2],
-// y: [1, 2],
-// type: 'scatter',
-// name: '(1,2)',
-// xaxis: 'x4',
-// yaxis: 'y4'
-// };
-// var data = [trace1, trace2, trace3, trace4];
-// var layout = {
-// title: 'Mulitple Custom Sized Subplots',
-// xaxis: {
-//     domain: [0, 0.45],
-//     anchor: 'y1'
-// },
-// yaxis: {
-//     domain: [0.5, 1],
-//     anchor: 'x1'
-// },
-// xaxis2: {
-//     domain: [0.55, 1],
-//     anchor: 'y2'
-// },
-// yaxis2: {
-//     domain: [0.8, 1],
-//     anchor: 'x2'
-// },
-// xaxis3: {
-//     domain: [0.55, 1],
-//     anchor: 'y3'
-// },
-// yaxis3: {
-//     domain: [0.5, 0.75],
-//     anchor: 'x3'
-// },
-// xaxis4: {
-//     domain: [0, 1],
-//     anchor: 'y4'
-// },
-// yaxis4: {
-//     domain: [0, 0.45],
-//     anchor: 'x4'
-// }
-// };
-// Plotly.plot('contour', data, layout, {showSendToCloud: true});
+window.onresize = scaleAll;
+document.body.onload = scaleAll;
