@@ -84,7 +84,8 @@ let contour_layout = {
     sliders: [{
         // Mach Slider
         name: 'mach_slider',
-        pad: {l: 0, t: 55},
+        pad: {l: 0, t: 45, r: 300},
+        // pad: {l: 0, t: 55},
         xanchor: 'left',
         yanchor: "top",
         currentvalue: {
@@ -97,7 +98,8 @@ let contour_layout = {
       }, {
         // Altitude Slider
         name: 'alt_slider',
-        pad: {l: 0, t: 175},
+        pad: {l: 300, t: 45, r: 0},
+        // pad: {l: 0, t: 175},
         xanchor: 'left',
         yanchor: "top",
         currentvalue: {
@@ -188,7 +190,9 @@ function machVsThrust(thrust_data_from_alt) {
     };
 
     let scatter_layout = {
-        title: 'Mach vs Thrust',
+        title: {
+            text: 'Mach vs Thrust'
+        },
         layer: 'below',
         xaxis: {
             title: {
@@ -218,3 +222,5 @@ function scaleAll() {
 
 window.onresize = scaleAll;
 document.body.onload = scaleAll;
+altVsThrust(0);
+machVsThrust(0);
