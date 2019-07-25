@@ -1,6 +1,7 @@
-var Plotly = require('plotly.js');
-const path = require('path')
+let Plotly = require('plotly.js');
+let createKDTree = require("static-kdtree")
 const json = require('json-loader!./data.json');
+var nj = require('jsnumpy');
 
 X = json['X'][0] // Mach
 Y = json['alt']  // Alt
@@ -114,7 +115,7 @@ let contour_layout = {
     l: 50,
     r: 50,
     b: 100,
-    t: 100,
+    t: 50,
     pad: 2
     },
     // shapes: [
@@ -152,14 +153,16 @@ function altVsThrust(thrust_data_from_mach) {
         // x will be thrust, y will be altitude
         x: Z[thrust_data_from_mach],
         y: Y,
-        type: 'scatter'
+        type: 'scatter',
+        showlegend: false
     };
 
     let training_data = {
         x: yt_0,
         y: alt_xt,
         mode: 'markers',
-        type: 'scatter'
+        type: 'scatter',
+        showlegend: false
       };
 
     let scatter_layout = {
@@ -169,7 +172,7 @@ function altVsThrust(thrust_data_from_mach) {
             title: {
                 text: 'Thrust'
             },
-            range: [0,1]
+            range: [Math.min.apply(null, scatter_data.x) - .05, Math.max.apply(null, scatter_data.x) + 0.05]
         },
         yaxis: {
             title: {
@@ -183,19 +186,27 @@ function altVsThrust(thrust_data_from_mach) {
     return Plotly.newPlot('scatter_one', [scatter_data, training_data], scatter_layout)
 }
 
+
+
+
+
 function machVsThrust(thrust_data_from_alt) {
     let scatter_data = {
         // x will be thrust, y will be altitude
         x: X,
         y: Z[thrust_data_from_alt],
-        type: 'scatter'
+        type: 'scatter',
+        showlegend: false
     };
+
+    
 
     let training_data = {
         x: mach_xt,
         y: yt_0,
         mode: 'markers',
-        type: 'scatter'
+        type: 'scatter',
+        showlegend: false
     };
 
     let scatter_layout = {
@@ -210,80 +221,11 @@ function machVsThrust(thrust_data_from_alt) {
             title: {
                 text: 'Thrust'
             },
-
+            range: [Math.min.apply(null, scatter_data.y) - .05, Math.max.apply(null, scatter_data.y) + 0.05],
         },
         width: 700,
         height: 300,
     }
 
-    return Plotly.newPlot('scatter_two', [scatter_data, training_data], scatter_layout)
+    return Plotly.newPlot('scatter_two', [scatter_data,training_data], scatter_layout)
 }
-
-
-// var trace1 = {
-// x: [1, 2],
-// y: [1, 2],
-// type: 'scatter',
-// name: '(1,1)'
-// };
-// var trace2 = {
-// x: [1, 2],
-// y: [1, 2],
-// type: 'scatter',
-// name: '(1,2)',
-// xaxis: 'x2',
-// yaxis: 'y2'
-// };
-// var trace3 = {
-// x: [1, 2],
-// y: [1, 2],
-// type: 'scatter',
-// name: '(1,2)',
-// xaxis: 'x3',
-// yaxis: 'y3'
-// };
-// var trace4 = {
-// x: [1, 2],
-// y: [1, 2],
-// type: 'scatter',
-// name: '(1,2)',
-// xaxis: 'x4',
-// yaxis: 'y4'
-// };
-// var data = [trace1, trace2, trace3, trace4];
-// var layout = {
-// title: 'Mulitple Custom Sized Subplots',
-// xaxis: {
-//     domain: [0, 0.45],
-//     anchor: 'y1'
-// },
-// yaxis: {
-//     domain: [0.5, 1],
-//     anchor: 'x1'
-// },
-// xaxis2: {
-//     domain: [0.55, 1],
-//     anchor: 'y2'
-// },
-// yaxis2: {
-//     domain: [0.8, 1],
-//     anchor: 'x2'
-// },
-// xaxis3: {
-//     domain: [0.55, 1],
-//     anchor: 'y3'
-// },
-// yaxis3: {
-//     domain: [0.5, 0.75],
-//     anchor: 'x3'
-// },
-// xaxis4: {
-//     domain: [0, 1],
-//     anchor: 'y4'
-// },
-// yaxis4: {
-//     domain: [0, 0.45],
-//     anchor: 'x4'
-// }
-// };
-// Plotly.plot('contour', data, layout, {showSendToCloud: true});
