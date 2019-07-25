@@ -1,6 +1,7 @@
-var Plotly = require('plotly.js');
-const path = require('path')
+let Plotly = require('plotly.js');
+let createKDTree = require("static-kdtree")
 const json = require('json-loader!./data.json');
+var nj = require('jsnumpy');
 
 X = json['X'][0] // Mach
 Y = json['alt']  // Alt
@@ -116,7 +117,7 @@ let contour_layout = {
     l: 50,
     r: 50,
     b: 100,
-    t: 100,
+    t: 50,
     pad: 2
     },
 }
@@ -143,14 +144,16 @@ function altVsThrust(thrust_data_from_mach) {
         // x will be thrust, y will be altitude
         x: Z[thrust_data_from_mach],
         y: Y,
-        type: 'scatter'
+        type: 'scatter',
+        showlegend: false
     };
 
     let training_data = {
         x: yt_0,
         y: alt_xt,
         mode: 'markers',
-        type: 'scatter'
+        type: 'scatter',
+        showlegend: false
       };
 
     let scatter_layout = {
@@ -160,7 +163,7 @@ function altVsThrust(thrust_data_from_mach) {
             title: {
                 text: 'Thrust'
             },
-            range: [0,1]
+            range: [Math.min.apply(null, scatter_data.x) - .05, Math.max.apply(null, scatter_data.x) + 0.05]
         },
         yaxis: {
             title: {
@@ -174,19 +177,27 @@ function altVsThrust(thrust_data_from_mach) {
     return Plotly.newPlot('scatter_one', [scatter_data, training_data], scatter_layout)
 }
 
+
+
+
+
 function machVsThrust(thrust_data_from_alt) {
     let scatter_data = {
         // x will be thrust, y will be altitude
         x: X,
         y: Z[thrust_data_from_alt],
-        type: 'scatter'
+        type: 'scatter',
+        showlegend: false
     };
+
+    
 
     let training_data = {
         x: mach_xt,
         y: yt_0,
         mode: 'markers',
-        type: 'scatter'
+        type: 'scatter',
+        showlegend: false
     };
 
     let scatter_layout = {
@@ -203,14 +214,15 @@ function machVsThrust(thrust_data_from_alt) {
             title: {
                 text: 'Thrust'
             },
-
+            range: [Math.min.apply(null, scatter_data.y) - .05, Math.max.apply(null, scatter_data.y) + 0.05],
         },
         width: 700,
         height: 300,
     }
 
-    return Plotly.newPlot('scatter_two', [scatter_data, training_data], scatter_layout)
+    return Plotly.newPlot('scatter_two', [scatter_data,training_data], scatter_layout)
 }
+
 
 function scaleAll() {
     let outer = document.getElementById("outer");
@@ -224,3 +236,5 @@ window.onresize = scaleAll;
 document.body.onload = scaleAll;
 altVsThrust(0);
 machVsThrust(0);
+
+
