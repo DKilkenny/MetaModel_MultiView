@@ -198,5 +198,16 @@ def make_serializable(o):
         return o
 
 with open('data.json', 'w') as outfile:
-    json.dump({'X': X, 'Y': Y, 'Z': Z, 'mach_min': min(mach), 'mach_max': max(mach), 'alt_min': min(alt), 'alt_max': max(alt), 'alt': alt, 'training_data_yt':yt, 'training_data_xt': xt},
+    json.dump({
+        'X': X, 
+        'Y': Y, 
+        'Z': Z, 
+        'mach_min': min(mach), 
+        'mach_max': max(mach), 
+        'alt_min': min(alt), 
+        'alt_max': max(alt), 
+        'alt': alt, 
+        'training_data_yt':yt, 
+        'training_data_xt': xt
+        },
      outfile, default=make_serializable) 
