@@ -5,34 +5,57 @@
     <title>MetaModelMultiview</title>
 
     <!-- the style tag formats the positioning of the plot elements -->
-    <style>div.contour_style {
-        position: relative;
+    <style>
+      div#outer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -500px;
+        margin-left: -500px;
+        width: 1000px;
+        height: 1000px;
+        /* border: 1px solid blue; */
+      }
+  
+      div#contour {
+        position: absolute;
         left: 300px;
-        /* width: 75%; */
-      } 
-    </style>
-      <style>div.scatter_one_style {
+        overflow: visible;
+        /* border: 1px solid green; */
+      }
+  
+      div#scatter_one {
         position: absolute;
         top: 0px;
-        left: 0;
+        left: 0px;
         width: 300px;
-        height: 200px;
+        height: 700px;
+        overflow: hidden;
+        /* border: 1px solid red; */
       }
-      </style>
-      <style>div.scatter_two_style {
-          position: absolute;
-          left: 290px; 
-          top: 700px;
-        }
-        </style>
+  
+      div#scatter_two {
+        position: absolute;
+        left: 290px;
+        top: 700px;
+        overflow: hidden;
+        /* border: 1px solid purple; */
+      }
+
+      /* To rotate the Alt slider
+      .slider-group:nth-child(2) {
+        transform: rotate(-90deg) translate(-430px, 0px) scale(0.6,1);
+      }
+      */
+    </style>
   </head>
 
   <body>
-    <div id="contour" class="contour_style"></div>
-    <div id="scatter_one" class="scatter_one_style"></div>
-    <div id="scatter_two" class="scatter_two_style"></div>
-    <script src="bundle.js"></script>
+    <div id="outer">
+      <div id="contour"></div>
+      <div id="scatter_one"></div>
+      <div id="scatter_two"></div>
+      <script src="bundle.js"></script>
+    </div>
   </body>
-</html>
-
 

@@ -85,7 +85,8 @@ let contour_layout = {
     sliders: [{
         // Mach Slider
         name: 'mach_slider',
-        pad: {l: 0, t: 55},
+        pad: {l: 0, t: 45, r: 300},
+        // pad: {l: 0, t: 55},
         xanchor: 'left',
         yanchor: "top",
         currentvalue: {
@@ -98,7 +99,8 @@ let contour_layout = {
       }, {
         // Altitude Slider
         name: 'alt_slider',
-        pad: {l: 0, t: 175},
+        pad: {l: 300, t: 45, r: 0},
+        // pad: {l: 0, t: 175},
         xanchor: 'left',
         yanchor: "top",
         currentvalue: {
@@ -118,17 +120,6 @@ let contour_layout = {
     t: 50,
     pad: 2
     },
-    // shapes: [
-    //     //line vertical
-    //     { type: 'line',
-    //     x0: 0,
-    //     y0: 0,
-    //     x1: 0,
-    //     y1: 43,
-    //     line: {
-    //     color: 'rgb(255, 255, 255)',
-    //     width: 3 }
-    // }],
 }
 
 Plotly.newPlot('contour', contour_data, contour_layout, {responsive: true})
@@ -210,7 +201,9 @@ function machVsThrust(thrust_data_from_alt) {
     };
 
     let scatter_layout = {
-        title: 'Mach vs Thrust',
+        title: {
+            text: 'Mach vs Thrust'
+        },
         layer: 'below',
         xaxis: {
             title: {
@@ -229,3 +222,19 @@ function machVsThrust(thrust_data_from_alt) {
 
     return Plotly.newPlot('scatter_two', [scatter_data,training_data], scatter_layout)
 }
+
+
+function scaleAll() {
+    let outer = document.getElementById("outer");
+    let minSize = Math.min(window.innerWidth, window.innerHeight);
+    let newScale = minSize / 1000;
+    let trText = "scale(" + newScale + ")";
+    outer.style.transform = trText;
+}
+
+window.onresize = scaleAll;
+document.body.onload = scaleAll;
+altVsThrust(0);
+machVsThrust(0);
+
+
